@@ -3,6 +3,7 @@
 use App\Http\Controllers\ProfileController;
 use Illuminate\Foundation\Application;
 use App\Http\Controllers\IncomeController;
+use App\Http\Controllers\ExpenseController;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
@@ -26,5 +27,7 @@ Route::middleware('auth')->group(function () {
 });
 
 Route::post('/income', [IncomeController::class, 'store'])->name('income.store');
+
+Route::post('/expense', [ExpenseController::class, 'store'])->name('expense.store');
 
 require __DIR__.'/auth.php';

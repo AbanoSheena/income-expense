@@ -8,5 +8,5 @@ class Income extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['description', 'category', 'amount'];
+    protected $fillable = ['description', 'category', 'amount', 'date_received'];
 }

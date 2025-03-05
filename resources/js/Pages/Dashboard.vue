@@ -24,14 +24,29 @@ const showModalExpense = ref(false);
 const form = useForm({
     description: '',
     category: '',
-    amount: ''
+    amount: '',
+    date_received: ''
 });
 
 const formExpense = useForm({
     description: '',
     category: '',
-    amount: ''
+    amount: '',
+    date_received: ''
 });
+
+const submitFormExpense = () => {
+    formExpense.post(route('expense.store'), {
+        onSuccess: () => {
+            showModalExpense.value = false; 
+            alertify.success('Expense added successfully!');
+            formExpense.reset();
+        },
+        onError: () => {
+            alertify.error('Failed to add expense. Please try again.');
+        }
+    });
+};
 
 const submitForm = () => {
     form.post(route('income.store'), {
@@ -45,6 +60,7 @@ const submitForm = () => {
         }
     });
 };
+
 export default {
     name: 'Dashboard',
     components: {
@@ -89,7 +105,7 @@ export default {
             <PrimaryButton class="m-1" @click="showModal = true">Add Income</PrimaryButton>
             <DangerButton class="m-1" @click="showModalExpense = true">Add Expense</DangerButton>
         </div>
-
+<!-- INCOME -->
         <Modal :show="showModal" @close="showModal = false">
             <template #title-header>
                 <h4 class="mx-auto text-center">Add Income</h4>
@@ -102,6 +118,7 @@ export default {
                     <textarea v-model="form.description" class="desc" placeholder="Description"></textarea>
                     <input v-model="form.category" type="text" placeholder="Category" class="category">
                     <input v-model="form.amount" type="number" class="amount" placeholder="Amount">
+                    <input v-model="form.date_received" type="date" name="date" id="date" class="date">
                     <button type="submit" class="btn-save">Save</button>
                 </form>
                 <!-- <input type="text"> -->
@@ -113,7 +130,7 @@ export default {
             </template>
             
         </Modal>
-
+<!-- EXPENSE -->
         <Modal :show="showModalExpense" @close="showModalExpense = false">
             <template #title-header>
                 <h4 class="mx-auto text-center">Add Expense</h4>
@@ -126,6 +143,7 @@ export default {
                     <textarea v-model="formExpense.description" class="desc" placeholder="Description"></textarea>
                     <input v-model="formExpense.category" type="text" class="category" placeholder="Category">
                     <input v-model="formExpense.amount" type="number" class="amount" placeholder="Amount">
+                    <input v-model="formExpense.date_received" type="date" name="date" id="date" class="date">
                     <button type="submit" class="btn-save">Save</button>
                 </form>
                 <!-- <input type="text"> -->
@@ -183,5 +201,9 @@ export default {
     height: 28px;
     color: white;
     text-align: center;
+}
+.date{
+    position: absolute;
+    top: 232px;
 }
 </style>

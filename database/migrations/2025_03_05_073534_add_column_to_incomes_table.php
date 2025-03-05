@@ -11,13 +11,8 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('expenses', function (Blueprint $table) {
-            $table->id();
-            $table->string('Description',255);
-            $table->string('Category',255);
-            $table->decimal('Amount',10, 2);
+        Schema::table('incomes', callback: function (Blueprint $table) {
             $table->date('date_received')->nullable();
-            $table->timestamps();
         });
     }
 
@@ -26,6 +21,8 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('expense');
+        Schema::table('incomes', function (Blueprint $table) {
+            $table->dropColumn('date_received');
+        });
     }
 };
