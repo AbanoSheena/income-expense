@@ -17,10 +17,51 @@ class ExpenseController extends Controller
             'amount' => 'required|numeric|min:0',
             'date_received' => 'required|date',
         ]);
-
-        
-        Expense::create($validated);
-
-        return redirect()->back()->with('success', 'Expense added successfully!');
+    
+        $expense = Expense::create($validated);
+    
+        return response()->json([
+            'success' => true,
+            'message' => 'Expense added successfully!',
+            'expense' => $expense
+        ]);
     }
+    public function index()
+    {
+        // $incomes = Income::all();
+        // $expenses = Expense::all();
+        // return Inertia::render('Dashboard', [
+        //     'incomes' => $incomes,
+        //     'expenses' => $expenses,
+        // ]);
+        return Inertia::render('Dashboard', [
+            'expenses' => Expense::all(),
+        ]);
+    }
+    public function destroy(Expense $expense)
+    {
+        $expense->delete();
+        return response()->json([
+            'success' => true,
+            'message' => 'Expense deleted successfully!',
+        ]);
+    }
+    public function update(Request $request, Expense $expense)
+    {
+        $validated = $request->validate([
+            'description' => 'required|string|max:255',
+            'category' => 'required|string|max:255',
+            'amount' => 'required|numeric|min:0',
+            'date_received' => 'required|date',
+        ]);
+
+        $expense->update($validated);
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Expense updated successfully!',
+            'expense' => $expense
+        ]);
+    }
+    
 }

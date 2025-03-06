@@ -10,58 +10,88 @@ import { useForm } from '@inertiajs/vue3';
 import alertify from 'alertifyjs';
 import 'alertifyjs/build/css/alertify.min.css';
 import Table from '@/Components/Table.vue';
+import { defineProps } from 'vue';
+import axios from 'axios';
 
+alertify.set('notifier', 'position', 'top-center');
+
+const props = defineProps({
+    incomes: {
+        type: Array,
+        required: true
+    },
+    expenses: {
+        type: Array,
+        required: true
+    }
+});
+
+const showModal = ref(false);
+const showModalExpense = ref(false);
+
+const form = ref({
+    description: '',
+    category: '',
+    amount: '',
+    date_received: ''
+});
+
+const formExpense = ref({
+    description: '',
+    category: '',
+    amount: 0,
+    date_received: ''
+});
+
+const submitFormExpense = () => {
+    // console.log("Form Data:", formExpense.value);
+    axios.post(route('expense.store', formExpense.value))
+        .then(response => {
+            if (response.data.success) {
+                showModalExpense.value = false;
+                alertify.success(response.data.message);
+                formExpense.value = {
+                    description: '',
+                    category: '',
+                    amount: '',
+                    date_received: ''
+                };
+                // Optionally, you can update the expenses list here
+            }
+        })
+        .catch(error => {
+            alertify.error('Failed to add expense. Please try again.');
+        });
+};
+
+const submitForm = () => {
+    // console.log("Form Data:", formExpense.value);
+    axios.post(route('income.store', form.value))
+        .then(response => {
+            if (response.data.success) {
+                showModal.value = false;
+                alertify.success(response.data.message);
+                form.value = {
+                    description: '',
+                    category: '',
+                    amount: '',
+                    date_received: ''
+                };
+                // Optionally, you can update the expenses list here
+            }
+        })
+        .catch(error => {
+            alertify.error('Failed to add income. Please try again.');
+        });
+};
+
+console.log('Incomes:', props.incomes);
+console.log('Expenses:', props.expenses);
 
 </script>
 
 
 <script>
-
-alertify.set('notifier', 'position', 'top-center');
-
-const showModal = ref(false);
-const showModalExpense = ref(false);
-
-const form = useForm({
-    description: '',
-    category: '',
-    amount: '',
-    date_received: ''
-});
-
-const formExpense = useForm({
-    description: '',
-    category: '',
-    amount: '',
-    date_received: ''
-});
-
-const submitFormExpense = () => {
-    formExpense.post(route('expense.store'), {
-        onSuccess: () => {
-            showModalExpense.value = false; 
-            alertify.success('Expense added successfully!');
-            formExpense.reset();
-        },
-        onError: () => {
-            alertify.error('Failed to add expense. Please try again.');
-        }
-    });
-};
-
-const submitForm = () => {
-    form.post(route('income.store'), {
-        onSuccess: () => {
-            showModal.value = false; 
-            alertify.success('Income added successfully!');
-            form.reset();
-        },
-        onError: () => {
-            alertify.error('Failed to add income. Please try again.');
-        }
-    });
-};
-
 export default {
     name: 'Dashboard',
     components: {
@@ -69,6 +99,7 @@ export default {
         DangerButton,
         Modal,
         Dropdown,
+        Table,
     },
     methods: {
         close() {
@@ -76,19 +107,25 @@ export default {
         }
     },
     // props: {
-    //     isVisible: {
-    //     type: Boolean,
-    //     default: false
+    //     incomes: {
+    //         default: []
+    //     },
+    //     expenses: {
+    //         default: []
     //     }
     // },
     data() {
         return {
-        showModal: false,
-        showModalExpense: false
+            showModal: false,
+            showModalExpense: false
         }
     },
 }
+
+
 </script>
+
+
 
 <template>
     <Head title="Dashboard" />
@@ -106,13 +143,11 @@ export default {
             <PrimaryButton class="m-1" @click="showModal = true">Add Income</PrimaryButton>
             <DangerButton class="m-1" @click="showModalExpense = true">Add Expense</DangerButton>
         </div>
+
 <!-- INCOME -->
         <Modal :show="showModal" @close="showModal = false">
             <template #title-header>
                 <h4 class="mx-auto text-center">Add Income</h4>
-                <!-- <button class="mt-4 px-4 py-2 bg-blue-500 text-white rounded close-btn" @click="showModal = false">
-                    Close
-                </button> -->
             </template>
             <template #body>
                 <form @submit.prevent="submitForm">
@@ -122,24 +157,14 @@ export default {
                     <input v-model="form.date_received" type="date" name="date" id="date" class="date">
                     <button type="submit" class="btn-save">Save</button>
                 </form>
-                <!-- <input type="text"> -->
-                <!--  -->
-                
-            </template>
-            <template #footer>
                 
             </template>
 
-            
-            
         </Modal>
 <!-- EXPENSE -->
         <Modal :show="showModalExpense" @close="showModalExpense = false">
             <template #title-header>
                 <h4 class="mx-auto text-center">Add Expense</h4>
-                <!-- <button class="mt-4 px-4 py-2 bg-blue-500 text-white rounded close-btn" @click="showModal = false">
-                    Close
-                </button> -->
             </template>
             <template #body>
                 <form @submit.prevent="submitFormExpense">
@@ -149,8 +174,6 @@ export default {
                     <input v-model="formExpense.date_received" type="date" name="date" id="date" class="date">
                     <button type="submit" class="btn-save">Save</button>
                 </form>
-                <!-- <input type="text"> -->
-                <!--  -->
                 
             </template>
             <template #footer>
@@ -160,36 +183,6 @@ export default {
         </Modal>
 
         <!-- TABLE -->
-        
-        <!-- <template #table>
-                <Table>
-                    <div class="overflow-x-auto">
-                        <table class="min-w-full bg-white border border-gray-300">
-                            <thead>
-                                <tr class="bg-gray-200 text-gray-600 uppercase text-sm leading-normal">
-                                    <th class="py-3 px-6 text-left">ID</th>
-                                    <th class="py-3 px-6 text-left">Description</th>
-                                    <th class="py-3 px-6 text-left">Category</th>
-                                    <th class="py-3 px-6 text-left">Amount</th>
-                                    <th class="py-3 px-6 text-center">Actions</th>
-                                </tr>
-                            </thead>
-                            <tbody class="text-gray-600 text-sm">
-                                <tr v-for="income in props.incomes" :key="income.id" class="border-b border-gray-200 hover:bg-gray-100">
-                                    <td class="py-3 px-6">{{ income.id }}</td>
-                                    <td class="py-3 px-6">{{ income.description }}</td>
-                                    <td class="py-3 px-6">{{ income.category }}</td>
-                                    <td class="py-3 px-6">{{ income.amount }}</td>
-                                    <td class="py-3 px-6 text-center">
-                                        <PrimaryButton @click="editIncome(income)" class="mr-2">Edit</PrimaryButton>
-                                        <DangerButton @click="deleteIncome(income.id)">Delete</DangerButton>
-                                    </td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div>
-                </Table>
-            </template> -->
 
         <div class="py-12">
             <div class="mx-auto max-w-7xl sm:px-6 lg:px-8">
@@ -198,6 +191,7 @@ export default {
                 >
                     <div class="p-6 text-gray-900">
                         <!-- You're logged in! -->
+                        <Table :incomes="incomes" :expenses="expenses" />
                     </div>
                 </div>
             </div>

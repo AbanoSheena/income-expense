@@ -40,6 +40,13 @@ watch(
     },
 );
 
+// watch(
+//     () => props.show,
+//     (newValue) => {
+//         document.body.style.overflow = newValue ? 'hidden' : '';
+//     }
+// );
+
 const close = () => {
     if (props.closeable) {
         emit('close');
@@ -95,6 +102,7 @@ export default {
 
 <template>
     <dialog
+        v-show="show" 
         class="z-50 m-0 min-h-full min-w-full overflow-y-auto bg-transparent backdrop:bg-transparent"
         ref="dialog"
     >
@@ -141,7 +149,10 @@ export default {
                                 <h4 class="title-modal">Default Modal Title</h4>
                             </slot>
                             <slot name="body">
-                                
+                                <textarea class="desc" placeholder="Description"></textarea>
+                                <input  type="text" placeholder="Category" class="category">
+                                <input  type="number" class="amount" placeholder="Amount">
+                                <input  type="date" name="date" id="date" class="date">
                             </slot>
                             <slot name="footer">
                                 <button class="absolute top-2 right-2" @click="close">✖</button>
