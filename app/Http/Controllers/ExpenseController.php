@@ -28,14 +28,10 @@ class ExpenseController extends Controller
     }
     public function index()
     {
-        // $incomes = Income::all();
-        // $expenses = Expense::all();
-        // return Inertia::render('Dashboard', [
-        //     'incomes' => $incomes,
-        //     'expenses' => $expenses,
-        // ]);
         return Inertia::render('Dashboard', [
             'expenses' => Expense::all(),
+            'income' => Income::all(),
+            'categories' => ['Income', 'Expense']
         ]);
     }
     public function destroy(Expense $expense)

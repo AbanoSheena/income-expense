@@ -36,13 +36,10 @@ Route::middleware('auth')->group(function () {
 });
 
 Route::post('/income', [IncomeController::class, 'store'])->name('income.store');
-// Route::get('/income', [IncomeController::class, 'index'])->name('income.index');
-
 Route::delete('/income/{income}', [IncomeController::class, 'destroy'])->name('income.destroy');
 Route::put('/income/{income}', [IncomeController::class, 'update'])->name('income.update');
 
 Route::post('/expense', [ExpenseController::class, 'store'])->name('expense.store');
-// Route::get('/expense', [ExpenseController::class, 'index'])->name('expense.index');
 Route::delete('/expense/{expense}', [ExpenseController::class, 'destroy'])->name('expense.destroy');
 Route::put('/expense/{expense}', [ExpenseController::class, 'update'])->name('expense.update');
 

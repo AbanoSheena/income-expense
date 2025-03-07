@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use App\Models\Income;
 use Inertia\Inertia;
 use App\Models\Expense;
+
 class IncomeController extends Controller
 {
     public function store(Request $request)
@@ -28,14 +29,10 @@ class IncomeController extends Controller
     }
     public function index()
     {
-        // $incomes = Income::all();
-        // $expenses = Expense::all();
-        // return Inertia::render('Dashboard', [
-        //     'incomes' => $incomes,
-        //     'expenses' => $expenses,
-        // ]);
         return Inertia::render('Dashboard', [
             'incomes' => Income::all(),
+            'expenses' => Expense::all(),
+            'categories' => ['Income', 'Expense']
         ]);
     }
     public function destroy(Income $income)

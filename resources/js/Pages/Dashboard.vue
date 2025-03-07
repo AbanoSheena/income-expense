@@ -13,6 +13,7 @@ import Table from '@/Components/Table.vue';
 import { defineProps } from 'vue';
 import axios from 'axios';
 
+
 alertify.set('notifier', 'position', 'top-center');
 
 const props = defineProps({
@@ -23,7 +24,8 @@ const props = defineProps({
     expenses: {
         type: Array,
         required: true
-    }
+    },
+    
 });
 
 const showModal = ref(false);
@@ -44,11 +46,13 @@ const formExpense = ref({
 });
 
 const submitFormExpense = () => {
-    // console.log("Form Data:", formExpense.value);
     axios.post(route('expense.store', formExpense.value))
         .then(response => {
             if (response.data.success) {
                 showModalExpense.value = false;
+                setTimeout(() => {
+                    location.reload();
+                }, 1000);
                 alertify.success(response.data.message);
                 formExpense.value = {
                     description: '',
@@ -56,7 +60,6 @@ const submitFormExpense = () => {
                     amount: '',
                     date_received: ''
                 };
-                // Optionally, you can update the expenses list here
             }
         })
         .catch(error => {
@@ -65,11 +68,13 @@ const submitFormExpense = () => {
 };
 
 const submitForm = () => {
-    // console.log("Form Data:", formExpense.value);
     axios.post(route('income.store', form.value))
         .then(response => {
             if (response.data.success) {
                 showModal.value = false;
+                setTimeout(() => {
+                    location.reload();
+                }, 1000);
                 alertify.success(response.data.message);
                 form.value = {
                     description: '',
@@ -77,7 +82,6 @@ const submitForm = () => {
                     amount: '',
                     date_received: ''
                 };
-                // Optionally, you can update the expenses list here
             }
         })
         .catch(error => {
@@ -106,14 +110,6 @@ export default {
             this.$emit('close')
         }
     },
-    // props: {
-    //     incomes: {
-    //         default: []
-    //     },
-    //     expenses: {
-    //         default: []
-    //     }
-    // },
     data() {
         return {
             showModal: false,
@@ -179,11 +175,9 @@ export default {
             <template #footer>
                 
             </template>
-            
         </Modal>
 
         <!-- TABLE -->
-
         <div class="py-12">
             <div class="mx-auto max-w-7xl sm:px-6 lg:px-8">
                 <div
@@ -235,4 +229,6 @@ export default {
     position: absolute;
     top: 232px;
 }
+
+
 </style>
